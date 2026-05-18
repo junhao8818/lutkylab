@@ -1,0 +1,100 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalURL: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  category?: string;
+  author?: string;
+  rating?: number;
+  faq?: Array<{ question: string; answer: string }>;
+  type?: 'website' | 'article';
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
+const {
+  title,
+  description,
+  canonicalURL,
+  heroImage,
+  heroImageAlt,
+  pubDate,
+  updatedDate,
+  category,
+  author = 'LUTkyLab',
+  rating,
+  faq = [],
+  type = 'website',
+  breadcrumbs = [],
+} = Astro.props;
+
+const siteUrl = 'https://lutkylab.com';
+const ogImage = heroImage ? (heroImage.startsWith('http') ? heroImage : `${siteUrl}${heroImage}`) : `${siteUrl}/og-default.png`;
+
+const articleSchema = type === 'article' ? {
+  '@context': 'https://schema.org',
+  '@type': category === 'review' ? 'Review' : 'Article',
+  headline: title,
+  description,
+  image: ogImage,
+  author: { '@type': 'Person', name: author, url: `${siteUrl}/about` },
+  publisher: { '@type': 'Organization', name: 'LUTkyLab', url: siteUrl },
+  datePublished: pubDate?.toISOString(),
+  dateModified: (updatedDate ?? pubDate)?.toISOString(),
+  url: canonicalURL,
+  ...(rating ? {
+    reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 5, worstRating: 1 },
+    itemReviewed: { '@type': 'Product', name: title.replace(/Review:?\s*/i, '') },
+  } : {}),
+} : null;
+
+const faqSchema = faq.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+} : null;
+
+const breadcrumbSchema = breadcrumbs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+    ...breadcrumbs.map((b, i) => ({ '@type': 'ListItem', position: i + 2, name: b.name, item: b.url })),
+  ],
+} : null;
+---
+
+<!-- Primary meta -->
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={heroImageAlt ?? title} />
+<meta property="og:site_name" content="LUTkyLab" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
+{updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+{author && <meta property="article:author" content={author} />}
+
+<!-- JSON-LD schemas -->
+{articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+{faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+{breadcrumbSchema && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />}

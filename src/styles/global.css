@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0A0A0B;
+  --color-bg-secondary: #141417;
+  --color-text-primary: #F5F5F5;
+  --color-text-muted: #9CA3AF;
+  --color-accent: #FF6B35;
+  --color-link: #60A5FA;
+  --color-border: #1F2028;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+@layer base {
+  :root { color-scheme: dark; }
+
+  html {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Light mode ─────────────────────────────── */
+  html.light {
+    color-scheme: light;
+    background-color: #F5F5F7;
+    color: #111113;
+  }
+
+  /* Page & card backgrounds */
+  html.light .bg-\[\#0A0A0B\]       { background-color: #F5F5F7 !important; }
+  html.light .bg-\[\#141417\]       { background-color: #FFFFFF !important; }
+  html.light .bg-\[\#1F2028\]       { background-color: #E5E7EB !important; }
+  html.light .bg-\[\#1A1A2E\]       { background-color: #F1F5F9 !important; }
+
+  /* Borders */
+  html.light .border-\[\#1F2028\]   { border-color: #E5E7EB !important; }
+
+  /* Text — general headings & body */
+  html.light .text-white            { color: #111827 !important; }
+  html.light .text-\[\#9CA3AF\]     { color: #6B7280 !important; }
+  html.light .text-\[\#6B7280\]     { color: #4B5563 !important; }
+  html.light .text-\[\#D1D5DB\]     { color: #374151 !important; }
+
+  /* Restore white text inside coloured buttons/badges */
+  html.light .bg-\[\#FF6B35\]       { color: #FFFFFF !important; }
+  html.light .bg-\[\#FF6B35\] *     { color: #FFFFFF !important; }
+
+  /* Header */
+  html.light header {
+    background-color: rgba(245, 245, 247, 0.92) !important;
+    border-color: #E5E7EB !important;
+  }
+  html.light header a,
+  html.light header span,
+  html.light header button { color: #111827; }
+  html.light header nav a  { color: #374151 !important; }
+  html.light header nav a:hover { color: #FF6B35 !important; }
+
+  /* Footer */
+  html.light footer { background-color: #ECECEC !important; border-color: #E5E7EB !important; }
+  html.light footer p, html.light footer a, html.light footer span { color: #4B5563 !important; }
+  html.light footer a:hover { color: #FF6B35 !important; }
+  html.light footer strong { color: #374151 !important; }
+
+  /* Prose */
+  html.light .prose p   { color: #374151; }
+  html.light .prose li  { color: #374151; }
+  html.light .prose h1, html.light .prose h2,
+  html.light .prose h3, html.light .prose h4 { color: #111827; }
+  html.light .prose strong { color: #111827 !important; }
+  html.light .prose a   { color: #2563EB; }
+  html.light .prose code {
+    background-color: #F1F5F9 !important;
+    color: #7C3AED !important;
+  }
+  html.light .prose pre  {
+    background-color: #F1F5F9 !important;
+    border-color: #E5E7EB !important;
+    color: #1E293B !important;
+  }
+  html.light .prose blockquote { color: #6B7280; }
+  html.light .prose th   { background-color: #F3F4F6 !important; color: #111827 !important; }
+  html.light .prose td   { color: #374151 !important; border-color: #E5E7EB !important; }
+  html.light .prose th   { border-color: #E5E7EB !important; }
+
+  /* PostCard & article cards */
+  html.light article { border-color: #E5E7EB !important; }
+
+  /* Accent badge text */
+  html.light .text-\[\#FF6B35\] { color: #D95E28 !important; }
+  html.light .text-\[\#60A5FA\] { color: #2563EB !important; }
+
+  body { min-height: 100vh; }
+}
+
+/* ── Scroll animations ──────────────────────────────────── */
+@layer base {
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Elements already in viewport on load show immediately */
+  .animate-on-scroll.no-anim {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.18; transform: scale(1); }
+  50%       { opacity: 0.28; transform: scale(1.08); }
+}
+
+/* ── Typography defaults ────────────────────────────────── */
+@layer base {
+  .prose {
+    max-width: 720px;
+    line-height: 1.75;
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    scroll-margin-top: 5rem;
+    color: #F5F5F5;
+  }
+  .prose h2 { font-size: 1.5rem; }
+  .prose h3 { font-size: 1.25rem; }
+
+  .prose p  { margin-bottom: 1.25rem; color: #D1D5DB; }
+  .prose a  { color: var(--color-link); text-decoration: underline; text-underline-offset: 3px; }
+  .prose strong { color: var(--color-text-primary); }
+
+  .prose ul, .prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .prose li { margin-bottom: 0.4rem; color: #D1D5DB; }
+
+  .prose pre {
+    background-color: #1A1A2E;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background-color: #1A1A2E;
+    padding: 0.15em 0.4em;
+    border-radius: 0.25rem;
+    color: #E879F9;
+  }
+  .prose pre code { background: none; padding: 0; color: inherit; }
+
+  .prose blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin-left: 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+  .prose img {
+    border-radius: 0.75rem;
+    width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+  }
+  .prose hr  { border-color: var(--color-border); margin: 2rem 0; }
+
+  .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
+  .prose th, .prose td {
+    border: 1px solid var(--color-border);
+    padding: 0.6rem 1rem;
+    text-align: left;
+  }
+  .prose th { background-color: var(--color-bg-secondary); font-weight: 600; color: #F5F5F5; }
+  .prose td { color: #D1D5DB; }
+}

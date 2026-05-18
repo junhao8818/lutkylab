@@ -1,0 +1,163 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import AdSlot from '../components/AdSlot.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage: string;
+  heroImageAlt: string;
+  category: string;
+  tags: string[];
+  author: string;
+  rating?: number;
+  faq?: Array<{ question: string; answer: string }>;
+  readingTime?: number;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  heroImageAlt,
+  category,
+  tags,
+  author,
+  rating,
+  faq = [],
+  readingTime,
+} = Astro.props;
+
+const formattedPub = pubDate.toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+const formattedUpd = updatedDate?.toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
+const categoryHref = `/${category}s`;
+
+const breadcrumbs = [
+  { name: categoryLabel + 's', url: `https://lutkylab.com${categoryHref}` },
+  { name: title, url: `https://lutkylab.com${Astro.url.pathname}` },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  heroImage={heroImage}
+  heroImageAlt={heroImageAlt}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  category={category}
+  author={author}
+  rating={rating}
+  faq={faq}
+  type="article"
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mx-auto max-w-[720px] px-4 sm:px-6 py-10">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-[#6B7280] mb-8" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-[#FF6B35] transition-colors">Home</a>
+      <span>/</span>
+      <a href={categoryHref} class="hover:text-[#FF6B35] transition-colors capitalize">{categoryLabel}s</a>
+      <span>/</span>
+      <span class="text-[#9CA3AF] line-clamp-1">{title}</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-8">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#FF6B35]/20 text-[#FF6B35]">
+          {categoryLabel}
+        </span>
+        {rating && (
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#141417] text-yellow-400 border border-[#1F2028]">
+            {'★'.repeat(Math.round(rating))}{'☆'.repeat(5 - Math.round(rating))} {rating}/5
+          </span>
+        )}
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-bold leading-tight text-white mb-4">{title}</h1>
+      <p class="text-lg text-[#9CA3AF] leading-relaxed mb-6">{description}</p>
+
+      <div class="flex flex-wrap items-center gap-4 text-sm text-[#6B7280] pb-6 border-b border-[#1F2028]">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-[#FF6B35] flex items-center justify-center text-white font-bold text-xs">LK</div>
+          <span>By <strong class="text-[#9CA3AF]">{author}</strong></span>
+        </div>
+        <time datetime={pubDate.toISOString()}>Published {formattedPub}</time>
+        {formattedUpd && <span>· Updated {formattedUpd}</span>}
+        {readingTime && <span>· {readingTime} min read</span>}
+      </div>
+    </header>
+
+    <!-- Hero image -->
+    <div class="mb-10 rounded-xl overflow-hidden aspect-[16/9] bg-[#141417]">
+      <img
+        src={heroImage}
+        alt={heroImageAlt}
+        width="720"
+        height="405"
+        loading="eager"
+        decoding="async"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <!-- First ad slot -->
+    <AdSlot slot="in-article" />
+
+    <!-- Article content -->
+    <article class="prose">
+      <slot />
+    </article>
+
+    <!-- End of post ad slot -->
+    <AdSlot slot="end-of-post" />
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="mt-10 pt-8 border-t border-[#1F2028]">
+        <p class="text-xs text-[#6B7280] uppercase tracking-wider mb-3">Tags</p>
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span class="text-xs px-3 py-1 rounded-full bg-[#141417] border border-[#1F2028] text-[#9CA3AF]">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- FAQ section (rendered from frontmatter for schema + UX) -->
+    {faq.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-[#1F2028]">
+        <h2 class="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
+        <div class="space-y-6">
+          {faq.map(({ question, answer }) => (
+            <div class="rounded-xl border border-[#1F2028] bg-[#141417] p-5">
+              <h3 class="font-semibold text-white mb-2">{question}</h3>
+              <p class="text-[#9CA3AF] text-sm leading-relaxed">{answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Author bio box -->
+    <div class="mt-12 rounded-xl border border-[#1F2028] bg-[#141417] p-6 flex gap-4">
+      <div class="shrink-0 w-14 h-14 rounded-full bg-[#FF6B35] flex items-center justify-center text-white font-bold text-xl">LK</div>
+      <div>
+        <p class="font-bold text-white mb-1">LUTkyLab</p>
+        <p class="text-sm text-[#9CA3AF] leading-relaxed mb-3">
+          Real-world guides, reviews, and color grading resources for DJI creators. Everything here is tested in the field — not from spec sheets.
+        </p>
+        <a href="/luts" class="text-sm text-[#60A5FA] hover:underline">Get 40 free LUTs →</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

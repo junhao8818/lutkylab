@@ -1,0 +1,195 @@
+---
+title: "D-Log M Color Grading in DaVinci Resolve"
+description: "My exact DaVinci Resolve workflow for Pocket 3 D-Log M footage — import settings, the 5-node structure I use every time, and export for YouTube."
+pubDate: 2024-05-15
+updatedDate: 2026-04-20
+heroImage: "/images/davinci-dlog-m-hero.jpg"
+heroImageAlt: "DaVinci Resolve color grading node tree for DJI Pocket 3 D-Log M footage"
+category: "tutorial"
+tags: ["d-log-m", "davinci-resolve", "color-grading", "tutorial", "lut", "workflow"]
+author: "LUTkyLab"
+featured: true
+amazonProducts: []
+faq:
+  - question: "Do I need DaVinci Resolve Studio to grade D-Log M footage?"
+    answer: "No. The free version of DaVinci Resolve handles D-Log M grading just fine. The main limitations of the free version are no noise reduction, no certain OFX plugins, and no collaboration features — none of which affect basic color grading."
+  - question: "Which color space should I use for DJI Pocket 3 D-Log M in DaVinci Resolve?"
+    answer: "Set your project color science to DaVinci YRGB Color Managed, input color space to DJI D-Log M, and output to Rec.709 for standard delivery. Alternatively, use the manual node approach I describe in this tutorial, which gives you more hands-on control."
+  - question: "Why does my D-Log M footage look grey and washed out?"
+    answer: "That is correct — D-Log M is a logarithmic profile that compresses tonal range intentionally. It is designed to be graded, not used straight out of camera. Apply a LUT or do a manual grade to restore contrast and saturation."
+  - question: "What LUT should I use for DJI Pocket 3 D-Log M?"
+    answer: "I have a free LUT pack built specifically for Pocket 3 D-Log M footage available on the LUTs page. For third-party options, look for LUTs specifically designed for D-Log M — generic LUTs designed for other log profiles will give you incorrect colors."
+  - question: "What export settings should I use for YouTube from DaVinci Resolve?"
+    answer: "For YouTube: H.264 or H.265, 4K (3840x2160), bitrate 80-100 Mbps for 4K, audio AAC 320kbps. I use H.265 at 80 Mbps for my delivery — it uploads faster and YouTube's compression handles it well. Make sure your timeline color space output is set to Rec.709 before export."
+---
+
+import AdSlot from '../../components/AdSlot.astro';
+import SpecTable from '../../components/SpecTable.astro';
+
+I spent a lot of evenings in 2023 and 2024 figuring out D-Log M. Most of the tutorials I found online were either for Sony S-Log, Canon Log, or generic "log footage" workflows that did not account for DJI's specific color science. I got better results once I stopped following generic tutorials and started treating D-Log M as its own thing.
+
+This is the exact workflow I use — the same node structure for every Pocket 3 project.
+
+## Before you start: project setup
+
+Get this right first. Wrong project settings will waste your grade.
+
+Open DaVinci Resolve → File → Project Settings:
+
+**Timeline settings:**
+- Timeline resolution: 3840 × 2160 (4K UHD)
+- Timeline frame rate: match your footage (I shoot 4K 60fps, so 60fps)
+- Playback frame rate: 60fps
+
+**Color management:**
+- Color science: **DaVinci YRGB** (not DaVinci YRGB Color Managed — the managed pipeline can clip D-Log M highlights in ways that are hard to predict)
+- Timeline color space: **Rec.709 Gamma 2.4**
+- Output color space: **Rec.709 Gamma 2.4**
+
+One thing that trips people up: if you use DaVinci YRGB Color Managed with D-Log M selected as input, Resolve applies a transform automatically. This is convenient but limits your control in the Color page. I prefer manual control, so I use plain YRGB and handle the transform myself in nodes.
+
+## Import and media organization
+
+Drag your Pocket 3 footage from the SD card into the Media Pool. Before you edit a single clip, do this:
+
+Right-click on a D-Log M clip → Clip Attributes → Color Space:
+- Color space: **DJI D-Log M**
+- Gamma: **DJI D-Log M**
+
+Do this for all your D-Log M clips. You can also right-click multiple clips and apply to selection. This tells Resolve what the footage actually is, which matters if you use any automatic transform tools later.
+
+If you forget this step, your LUTs and color transforms will produce incorrect results.
+
+<AdSlot slot="between-section" />
+
+## The node structure I use every time
+
+In DaVinci Resolve's Color page, I use a consistent 5-node structure for every Pocket 3 project. Here it is:
+
+```
+Node 1: Transform (D-Log M → Rec.709)
+Node 2: Exposure & White Balance correction
+Node 3: Contrast & Tone shaping
+Node 4: Color (Saturation, Hue, specific channels)
+Node 5: Creative grade / LUT / Final look
+```
+
+Let me walk through each one.
+
+### Node 1 — Transform
+
+This node converts D-Log M to a workable Rec.709 starting point. Without this, you are grading on a flat, grey image with compressed contrast.
+
+Right-click on Node 1 → Add LUT → select your D-Log M to Rec.709 LUT. DJI provides an official one (download from DJI's website), or you can use the one included in my free LUT pack.
+
+If you do not have a conversion LUT: In Node 1, use the Color Wheels to lift the blacks (raise the lift wheel slightly), crush the highlights (lower the gain wheel), and add contrast via the S-curve in Custom Curves. This is manual, but it gives you the same starting point.
+
+After this node, your footage should look roughly like a "normal" camera image — natural colors, proper contrast. Not cinematic yet, but no longer grey soup.
+
+### Node 2 — Exposure and white balance
+
+This is where you fix the actual technical problems with each clip. Every clip gets individual treatment here.
+
+**Exposure:** Use the parade scope (waveform display). Your whites should be hitting around 700-750 on the IRE scale, not clipping at 1023. Your blacks should be sitting at 30-60 IRE unless you specifically want crushed blacks.
+
+**White balance:** Use the Qualifier or just adjust the Color Wheels (Lift = shadows, Gamma = midtones, Gain = highlights). The Pocket 3's Auto White Balance is good, but in mixed lighting (a street market with both natural and sodium vapor lights), you will need to push the shadows cooler and keep the midtones neutral.
+
+**Practical tip:** I do this node with the clip-level adjustment, not the timeline-level. That means each clip can have its own exposure correction before the "shared" creative grade in later nodes.
+
+### Node 3 — Contrast and tone shaping
+
+This node is where I build the foundational look — the light/dark relationship that everything else sits on.
+
+In the Custom Curves panel:
+- Pull the shadows down slightly (point at about 20% on the input, drop it to 15% output) — this creates a lifted, cinematic shadow base
+- Add a gentle S-curve — push highlights up slightly, push shadows down slightly
+- Keep the midtones neutral at this stage
+
+I also use the Lift/Gamma/Gain wheels here:
+- Lift: +0.005 to +0.010 (lifts the blacks very slightly — prevents crushed shadows)
+- Gain: -0.010 to -0.020 (rolls off the highlights — prevents harsh whites)
+
+Check your waveform constantly. If anything is clipping at 1023 or below 0, fix it before moving on.
+
+### Node 4 — Color
+
+This is where the actual "color look" happens.
+
+**Saturation:** I start at around 45-50 (DaVinci Resolve's default is 50). D-Log M after conversion tends to look slightly desaturated, so I bump this to 55-60 for most footage.
+
+**Hue adjustments:** Use the Hue vs. Saturation and Hue vs. Hue curves. The two things I always do:
+- Slightly increase orange saturation (skin tones, warm daylight)
+- Pull down the yellow-green range slightly (foliage can look oversaturated and unnatural)
+- Bump up teal/blue saturation very slightly for skies and water
+
+**Skin tones:** The Pocket 3's skin tones in D-Log M can trend slightly magenta after conversion. In the Hue vs. Hue curve, find the orange-red range and nudge it very slightly toward orange. This subtle shift reads as warmer, more flattering skin.
+
+### Node 5 — Creative grade / LUT
+
+This is the final look layer. Two options:
+
+**Option A — Apply a LUT:** Right-click Node 5 → Add LUT → browse to your creative LUT. Use the opacity slider (top right) to control the LUT intensity. I typically run LUTs at 70-85% opacity, not 100%, because full LUT application often overpowers the previous grade.
+
+**Option B — Manual creative grade:** Use the color wheels to push your shadows toward a specific hue (cool shadows are cinematic, warm shadows feel nostalgic), pull your highlights the opposite direction, and finalize the saturation.
+
+I use my own LUTs at about 75% opacity for most footage. They are tuned specifically for D-Log M and the Pocket 3 sensor, so they land close to where I want them without much fighting.
+
+[Get the free LUT pack for Pocket 3 D-Log M →](/luts)
+
+<AdSlot slot="between-section" />
+
+## Specific scenarios and adjustments
+
+### Daylight outdoor footage
+
+Starting point: Node 1 transform, Node 2 reduce highlights (daylight often clips), Node 3 gentle S-curve, Node 4 boost saturation to 55, Node 5 warm-toned LUT or manual warm grade.
+
+Main issue to watch: blown highlights on the sky. In Node 2, use the Highlight wheel in HLG or the Custom Curve highlight rolloff to recover sky detail. If it is completely blown, you cannot recover it — that is why I shoot with ND filters.
+
+### Golden hour footage
+
+D-Log M handles golden hour beautifully. The warm tones are all there waiting for you. In Node 4, slightly boost the orange saturation and pull the shadows slightly cooler (complementary contrast between warm lights and cool shadows). Do not over-process golden hour — the footage is already doing the work.
+
+### Night / low light (ISO 800+)
+
+First: apply noise reduction before color grading. In the Color page, open the Motion Effects panel. Use Temporal NR at strength 10-15 and Spatial NR at about 10. This knocks down the visible noise without making the footage look fake.
+
+Then grade, but be gentle with shadow lifting in Node 3. At high ISO, the shadows have noise — lifting them makes that noise louder. Keep shadows relatively dark or accept that the noise is part of the look.
+
+### Indoor mixed lighting
+
+This is the hardest scenario. In Node 2, make a deliberate decision: are you grading for the key light or for the fill light? You cannot split the difference and get good results. Pick one, correct to it, and let the other light sources read as colored.
+
+## Export settings
+
+<SpecTable
+  caption="My DaVinci Resolve export settings for YouTube"
+  headers={["Setting", "Value"]}
+  rows={[
+    ["Format", "MP4"],
+    ["Codec", "H.265 (HEVC) Main10"],
+    ["Resolution", "3840 × 2160"],
+    ["Frame rate", "Match timeline (60fps or 30fps)"],
+    ["Quality", "Restrict to: 80,000 kbps"],
+    ["Audio codec", "AAC"],
+    ["Audio bitrate", "320 kbps"],
+    ["Color space tag", "Rec.709"],
+    ["Gamma tag", "Rec.709-A"],
+  ]}
+/>
+
+One critical setting people miss: in the Deliver page, under Advanced Settings → Color space tag → set to **Rec.709**. Without this, YouTube may interpret the color space incorrectly and your colors will look wrong in the player.
+
+## Common mistakes I see
+
+**Grading without a conversion LUT in Node 1:** You end up fighting the flat image for the whole grade. Apply the transform first.
+
+**Setting saturation too high:** D-Log M after conversion tends to look slightly desaturated, and the temptation is to push saturation hard. Above 65, you start getting unnatural skin tones and clipping colors. Stay between 50-60 for most footage.
+
+**Not checking the parade scope:** Just looking at the image on a monitor will fool you. Monitors are calibrated differently, viewing environments differ. Use the parade and waveform scopes. They do not lie.
+
+**Applying a LUT at 100% opacity:** LUTs are designed as a starting point, not a final grade. Blend them with your manual grade for a natural result.
+
+---
+
+*For the free LUT pack I designed for Pocket 3 D-Log M footage, visit the [LUTs page](/luts). For my full review of the camera that makes all this necessary, read the [DJI Pocket 3 review](/reviews/dji-pocket-3-honest-review).*

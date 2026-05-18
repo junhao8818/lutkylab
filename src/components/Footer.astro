@@ -1,0 +1,75 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[#1F2028] bg-[#0A0A0B] mt-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <!-- Brand column -->
+      <div>
+        <a href="/" class="flex items-center gap-2 mb-4 no-underline">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6B35] text-sm font-bold text-white">LK</div>
+          <span class="font-bold text-white text-lg">LUTkyLab</span>
+        </a>
+        <p class="text-[#9CA3AF] text-sm leading-relaxed">
+          Real-world guides, reviews, and color grading tutorials for DJI creators. Written by a creator who actually shoots with DJI gear.
+        </p>
+      </div>
+
+      <!-- Navigation -->
+      <div>
+        <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Content</h3>
+        <ul class="space-y-2">
+          {[
+            ['/reviews', 'Camera Reviews'],
+            ['/tutorials', 'Tutorials'],
+            ['/comparisons', 'Comparisons'],
+            ['/guides', 'Buying Guides'],
+            ['/luts', 'Free LUTs'],
+          ].map(([href, label]) => (
+            <li><a href={href} class="text-[#9CA3AF] text-sm hover:text-[#FF6B35] transition-colors">{label}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Legal / Social -->
+      <div>
+        <h3 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Info</h3>
+        <ul class="space-y-2">
+          {[
+            ['/about', 'About'],
+            ['/contact', 'Contact'],
+            ['/affiliate-disclosure', 'Affiliate Disclosure'],
+            ['/privacy', 'Privacy Policy'],
+            ['/rss.xml', 'RSS Feed'],
+          ].map(([href, label]) => (
+            <li><a href={href} class="text-[#9CA3AF] text-sm hover:text-[#FF6B35] transition-colors">{label}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Affiliate disclosure + copyright -->
+    <div class="border-t border-[#1F2028] pt-8 space-y-3">
+      <p class="text-[#9CA3AF] text-xs leading-relaxed">
+        <strong class="text-[#6B7280]">Affiliate disclosure:</strong> As an Amazon Associate, I earn from qualifying purchases. Some links on this site are affiliate links — I may earn a small commission at no extra cost to you. I only recommend gear I've actually used. <a href="/affiliate-disclosure" class="text-[#60A5FA] hover:underline">Learn more →</a>
+      </p>
+      <p class="text-[#6B7280] text-xs">
+        © {year} LUTkyLab · All rights reserved
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- JSON-LD Organization schema -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "LUTkyLab",
+  "url": "https://lutkylab.com",
+  "logo": "https://lutkylab.com/logo.png",
+  "sameAs": [
+    "https://www.xiaohongshu.com/user/profile/lutkylab"
+  ],
+  "description": "The Lab for DJI Pocket 3 Creators — real-world reviews, tutorials, and color grading guides."
+})} />

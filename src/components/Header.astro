@@ -1,0 +1,103 @@
+---
+const navLinks = [
+  { href: '/reviews', label: 'Reviews' },
+  { href: '/tutorials', label: 'Tutorials' },
+  { href: '/comparisons', label: 'Comparisons' },
+  { href: '/guides', label: 'Guides' },
+  { href: '/luts', label: 'LUTs' },
+];
+
+const { pathname } = Astro.url;
+---
+
+<header class="sticky top-0 z-50 border-b border-[#1F2028] bg-[#0A0A0B]/90 backdrop-blur-sm">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="flex h-16 items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 text-white no-underline">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6B35] text-sm font-bold text-white">
+          LK
+        </div>
+        <span class="font-bold text-lg tracking-tight">LUTkyLab</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6">
+        {navLinks.map(({ href, label }) => (
+          <a
+            href={href}
+            class={`text-sm transition-colors hover:text-[#FF6B35] ${pathname.startsWith(href) ? 'text-[#FF6B35] font-medium' : 'text-[#9CA3AF]'}`}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <!-- Dark mode toggle -->
+        <button
+          id="theme-toggle"
+          aria-label="Toggle light/dark mode"
+          class="rounded-lg p-2 text-[#9CA3AF] transition-colors hover:bg-[#141417] hover:text-white"
+        >
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </button>
+
+        <!-- Mobile menu button -->
+        <button
+          id="mobile-menu-toggle"
+          aria-label="Toggle mobile menu"
+          class="md:hidden rounded-lg p-2 text-[#9CA3AF] hover:bg-[#141417] hover:text-white"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <nav id="mobile-menu" class="hidden md:hidden border-t border-[#1F2028] py-4">
+      {navLinks.map(({ href, label }) => (
+        <a
+          href={href}
+          class={`block py-2 text-sm transition-colors hover:text-[#FF6B35] ${pathname.startsWith(href) ? 'text-[#FF6B35] font-medium' : 'text-[#9CA3AF]'}`}
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const moon = document.getElementById('icon-moon');
+  const sun = document.getElementById('icon-sun');
+  const html = document.documentElement;
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  const stored = localStorage.getItem('theme');
+  if (stored === 'light') {
+    html.classList.add('light');
+    moon?.classList.add('hidden');
+    sun?.classList.remove('hidden');
+  }
+
+  toggle?.addEventListener('click', () => {
+    const isLight = html.classList.toggle('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    moon?.classList.toggle('hidden', isLight);
+    sun?.classList.toggle('hidden', !isLight);
+  });
+
+  mobileToggle?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

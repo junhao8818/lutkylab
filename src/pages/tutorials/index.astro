@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('tutorials')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+---
+
+<BaseLayout
+  title="DJI Pocket 4 & Pocket 3 Tutorials — D-Log M Color Grading"
+  description="Step-by-step tutorials for DJI Pocket 4 and Pocket 3: color grading in DaVinci Resolve, D-Log M workflow, and camera settings guides."
+>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-12">
+    <div class="mb-10">
+      <h1 class="text-4xl font-bold text-white mb-3">Tutorials</h1>
+      <p class="text-[#9CA3AF] text-lg">Color grading, settings, and workflow guides — step by step.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          href={`/tutorials/${post.id}`}
+          pubDate={post.data.pubDate}
+          heroImage={post.data.heroImage}
+          heroImageAlt={post.data.heroImageAlt}
+          category={post.data.category}
+          featured={post.data.featured}
+        />
+      ))}
+    </div>
+    {posts.length === 0 && (
+      <p class="text-[#6B7280] text-center py-20">More tutorials coming soon.</p>
+    )}
+  </div>
+</BaseLayout>

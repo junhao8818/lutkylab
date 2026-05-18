@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EmailCapture from '../../components/EmailCapture.astro';
+
+const DJI_LUTS = [
+  { file: 'lk-dji-neutral',      name: 'Neutral',      desc: 'Clean Rec.709 decode. No look — your accurate starting point.',       palette: ['#6b7a7a','#8a9090','#9ea8a2'] },
+  { file: 'lk-dji-warm-film',    name: 'Warm Film',    desc: 'Golden midtones, lifted blacks. Inspired by Kodak Vision3.',           palette: ['#c4885a','#d4a070','#8a6040'] },
+  { file: 'lk-dji-teal-orange',  name: 'Teal & Orange', desc: 'Teal shadows, orange highlights. The cinematic look, done right.',    palette: ['#1a5060','#4a7080','#d4702a'] },
+  { file: 'lk-dji-golden-hour',  name: 'Golden Hour',  desc: 'Deep orange-gold push. Built for sunset and late afternoon.',          palette: ['#d0900a','#c07818','#8a5010'] },
+  { file: 'lk-dji-moody-dark',   name: 'Moody Dark',   desc: 'Crushed blacks, cool highlights. High drama, low key.',               palette: ['#2a3040','#1a2030','#3a4858'] },
+  { file: 'lk-dji-pastel',       name: 'Pastel',       desc: 'Lifted (matte) blacks, desaturated, airy. Lifestyle & portrait.',      palette: ['#e8d0c4','#d8c4b8','#ccc0b8'] },
+  { file: 'lk-dji-fuji',         name: 'Fuji',         desc: 'Fujifilm-inspired. Cyan highs, warm shadows, punchy greens.',          palette: ['#7ab0b8','#90c0b0','#60a0a8'] },
+  { file: 'lk-dji-kodak',        name: 'Kodak',        desc: 'Warm red-orange push, magenta-leaning highlights.',                    palette: ['#c87048','#b86040','#d48060'] },
+  { file: 'lk-dji-street',       name: 'Street',       desc: 'High contrast, punchy blacks, slight desaturation. Urban footage.',    palette: ['#505050','#303030','#707070'] },
+  { file: 'lk-dji-sunset',       name: 'Sunset',       desc: 'Orange-red push in highlights, cooler blue shadows. Travel-ready.',   palette: ['#d86020','#c04818','#40609a'] },
+];
+
+const IPHONE_LUTS = [
+  { file: 'lk-iphone-natural',    name: 'Natural',    desc: "Removes iPhone's blue cast. Slight warmth. Best starting point.",      palette: ['#b09888','#c0a898','#a09080'] },
+  { file: 'lk-iphone-warm-film',  name: 'Warm Film',  desc: 'Warm golden tones, lifted blacks. Cinematic iPhone grade.',             palette: ['#c49060','#d0a070','#886040'] },
+  { file: 'lk-iphone-cinema',     name: 'Cinema',     desc: 'Matte, desaturated, flat. Simulates a film scan.',                      palette: ['#707878','#606868','#808888'] },
+  { file: 'lk-iphone-golden',     name: 'Golden',     desc: 'Golden hour enhancement. Boosts warm tones, holds highlights.',         palette: ['#d0980a','#c08018','#986010'] },
+  { file: 'lk-iphone-moody',      name: 'Moody',      desc: 'Dark, atmospheric, slightly cool. Great for dramatic scenes.',          palette: ['#303848','#202830','#404858'] },
+  { file: 'lk-iphone-travel',     name: 'Travel',     desc: 'Bright, vivid, punchy. Built for sunny travel footage and vlogs.',      palette: ['#60b0e0','#78c0f0','#50a8d0'] },
+  { file: 'lk-iphone-cool',       name: 'Cool',       desc: 'Desaturated blue-steel tone. Clean and minimal.',                       palette: ['#607898','#507080','#6888a8'] },
+  { file: 'lk-iphone-vintage',    name: 'Vintage',    desc: 'Faded, warm, slightly green cast. Classic film archive look.',          palette: ['#a09060','#908050','#786840'] },
+  { file: 'lk-iphone-portrait',   name: 'Portrait',   desc: 'Skin-tone optimised. Warm midtones, neutral shadows.',                  palette: ['#d0a888','#c09878','#b08868'] },
+  { file: 'lk-iphone-night',      name: 'Night',      desc: 'Enhanced for neon lights and low-light. Boosts colour, holds blacks.',  palette: ['#302868','#201858','#604898'] },
+];
+---
+
+<BaseLayout
+  title="Free LUTs for DJI Pocket 4, Pocket 3 & iPhone"
+  description="20 free colour grading LUTs for DJI D-Log M (Pocket 4, Pocket 3, Osmo, Action) and iPhone. Works in DaVinci Resolve, Premiere Pro, Final Cut Pro."
+>
+
+  <!-- Hero -->
+  <section class="luts-hero relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+    </div>
+    <div class="relative mx-auto max-w-4xl px-4 sm:px-6 py-20 text-center">
+      <span class="inline-flex items-center gap-2 rounded-full border border-[#FF6B35]/40 bg-[#FF6B35]/10 px-4 py-1.5 text-sm font-semibold text-[#FF6B35] mb-6 animate-on-scroll">
+        <span class="w-2 h-2 rounded-full bg-[#FF6B35] inline-block pulse-dot"></span>
+        20 Free LUT Files — .cube format
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-bold text-white mb-5 leading-tight animate-on-scroll">
+        Free LUTs for<br />
+        <span class="text-[#FF6B35]">DJI D-Log M</span> &amp; <span class="text-[#FF6B35]">iPhone</span>
+      </h1>
+      <p class="text-lg text-[#9CA3AF] max-w-2xl mx-auto mb-8 leading-relaxed animate-on-scroll">
+        10 LUTs for DJI Pocket&nbsp;4, Pocket&nbsp;3, Osmo, and Action D-Log&nbsp;M footage.
+        10 LUTs for iPhone video. Works in DaVinci&nbsp;Resolve, Premiere&nbsp;Pro, and Final&nbsp;Cut&nbsp;Pro.
+      </p>
+      <div class="flex flex-wrap gap-3 justify-center animate-on-scroll">
+        <a
+          href="#dji"
+          class="inline-flex items-center gap-2 rounded-xl bg-[#FF6B35] px-5 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity text-sm"
+        >
+          DJI D-Log M LUTs
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <a
+          href="#iphone"
+          class="inline-flex items-center gap-2 rounded-xl border border-[#1F2028] bg-[#141417] px-5 py-2.5 font-semibold text-white hover:border-[#FF6B35]/40 transition-colors text-sm"
+        >
+          iPhone LUTs
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How-to install strip -->
+  <section class="border-y border-[#1F2028] bg-[#141417]">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 py-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      {[
+        { n: '1', label: 'Download the .cube file', sub: 'Click any LUT card below' },
+        { n: '2', label: 'Import into your editor', sub: 'DaVinci Resolve · Premiere · FCP' },
+        { n: '3', label: 'Apply to your clip', sub: 'Adjust intensity to taste' },
+      ].map(({ n, label, sub }) => (
+        <div class="flex flex-col items-center gap-2 animate-on-scroll">
+          <div class="w-9 h-9 rounded-full bg-[#FF6B35]/20 border border-[#FF6B35]/40 flex items-center justify-center text-[#FF6B35] font-bold text-sm">{n}</div>
+          <p class="font-semibold text-white text-sm">{label}</p>
+          <p class="text-xs text-[#6B7280]">{sub}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── DJI Section ── -->
+  <section id="dji" class="mx-auto max-w-6xl px-4 sm:px-6 py-16">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 animate-on-scroll">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-[#FF6B35] mb-2 block">DJI Cameras</span>
+        <h2 class="text-3xl font-bold text-white">D-Log M LUTs</h2>
+        <p class="text-[#9CA3AF] mt-2 text-sm">Works with Pocket 4, Pocket 3, Osmo Series, Action 4/5, and Mavic drones — any DJI camera that shoots D-Log M.</p>
+      </div>
+      <a
+        href="/luts/dji/lk-dji-neutral.cube"
+        download
+        class="shrink-0 inline-flex items-center gap-2 rounded-xl border border-[#FF6B35]/40 bg-[#FF6B35]/10 px-5 py-2.5 text-sm font-semibold text-[#FF6B35] hover:bg-[#FF6B35]/20 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Start with Neutral
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {DJI_LUTS.map((lut, i) => (
+        <div class="lut-card group animate-on-scroll" style={`animation-delay: ${i * 40}ms`}>
+          <!-- Color swatch -->
+          <div class="lut-swatch" style={`background: linear-gradient(135deg, ${lut.palette[0]} 0%, ${lut.palette[1]} 50%, ${lut.palette[2]} 100%)`}>
+            <div class="lut-swatch-before">D-Log M</div>
+            <div class="lut-swatch-arrow">→</div>
+            <div class="lut-swatch-label">{lut.name}</div>
+          </div>
+          <!-- Info -->
+          <div class="p-4">
+            <h3 class="font-bold text-white text-sm mb-1">{lut.name}</h3>
+            <p class="text-[#6B7280] text-xs leading-relaxed mb-4">{lut.desc}</p>
+            <a
+              href={`/luts/dji/${lut.file}.cube`}
+              download
+              class="lut-download-btn"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Download .cube
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Email capture -->
+  <div class="mx-auto max-w-3xl px-4 sm:px-6">
+    <EmailCapture
+      headline="Get new LUT packs before anyone else"
+      subline="We drop new DJI and iPhone LUT packs, grading tips, and gear guides. Free, no spam, unsubscribe any time."
+      source="luts-page"
+    />
+  </div>
+
+  <!-- Divider -->
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="border-t border-[#1F2028]"></div>
+  </div>
+
+  <!-- ── iPhone Section ── -->
+  <section id="iphone" class="mx-auto max-w-6xl px-4 sm:px-6 py-16">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 animate-on-scroll">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-[#60A5FA] mb-2 block">iPhone</span>
+        <h2 class="text-3xl font-bold text-white">iPhone LUTs</h2>
+        <p class="text-[#9CA3AF] mt-2 text-sm">For standard iPhone video. Works with iPhone 13–16, ProRes, and Cinematic mode footage.</p>
+      </div>
+      <a
+        href="/luts/iphone/lk-iphone-natural.cube"
+        download
+        class="shrink-0 inline-flex items-center gap-2 rounded-xl border border-[#60A5FA]/40 bg-[#60A5FA]/10 px-5 py-2.5 text-sm font-semibold text-[#60A5FA] hover:bg-[#60A5FA]/20 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Start with Natural
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {IPHONE_LUTS.map((lut, i) => (
+        <div class="lut-card group animate-on-scroll" style={`animation-delay: ${i * 40}ms`}>
+          <div class="lut-swatch iphone-swatch" style={`background: linear-gradient(135deg, ${lut.palette[0]} 0%, ${lut.palette[1]} 50%, ${lut.palette[2]} 100%)`}>
+            <div class="lut-swatch-before">iPhone</div>
+            <div class="lut-swatch-arrow">→</div>
+            <div class="lut-swatch-label">{lut.name}</div>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-white text-sm mb-1">{lut.name}</h3>
+            <p class="text-[#6B7280] text-xs leading-relaxed mb-4">{lut.desc}</p>
+            <a
+              href={`/luts/iphone/${lut.file}.cube`}
+              download
+              class="lut-download-btn iphone-btn"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Download .cube
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Install guide -->
+  <section class="mx-auto max-w-4xl px-4 sm:px-6 pb-20">
+    <div class="rounded-2xl border border-[#1F2028] bg-[#141417] p-8 animate-on-scroll">
+      <h2 class="text-xl font-bold text-white mb-6">How to install in each editor</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          {
+            app: 'DaVinci Resolve',
+            steps: ['Open Color page', 'LUTs panel → right-click', 'Open LUT Folder', 'Paste the .cube file', 'Click "Update Lists"'],
+          },
+          {
+            app: 'Premiere Pro',
+            steps: ['Open Lumetri Color', 'Basic Correction tab', 'Input LUT dropdown', 'Browse to the .cube file', 'Adjust intensity with opacity'],
+          },
+          {
+            app: 'Final Cut Pro',
+            steps: ['Download LUT Utility (free)', 'Import the .cube file', 'Drag effect onto clip', 'Or use Color Finale plugin', 'Both accept .cube files'],
+          },
+        ].map(({ app, steps }) => (
+          <div>
+            <h3 class="font-semibold text-white text-sm mb-3">{app}</h3>
+            <ol class="space-y-1.5">
+              {steps.map((s, i) => (
+                <li class="flex items-start gap-2 text-xs text-[#9CA3AF]">
+                  <span class="shrink-0 w-4 h-4 rounded-full bg-[#1F2028] text-[#6B7280] flex items-center justify-center text-[10px] font-bold mt-0.5">{i+1}</span>
+                  {s}
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* ── Hero ── */
+  .luts-hero {
+    background: #0A0A0B;
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .hero-orb-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #FF6B35, transparent);
+    top: -100px; left: -100px;
+  }
+  .hero-orb-2 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, #60A5FA, transparent);
+    bottom: -80px; right: -80px;
+    animation-delay: -4s;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, 20px); }
+  }
+
+  /* ── Pulse dot ── */
+  .pulse-dot {
+    animation: pulseDot 2s ease-in-out infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  /* ── LUT Card ── */
+  .lut-card {
+    border-radius: 0.875rem;
+    border: 1px solid #1F2028;
+    background: #141417;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .lut-card:hover {
+    border-color: rgba(255,107,53,0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+
+  /* ── Color Swatch ── */
+  .lut-swatch {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    position: relative;
+    transition: filter 0.2s;
+  }
+  .lut-card:hover .lut-swatch {
+    filter: brightness(1.08);
+  }
+  .lut-swatch-before {
+    background: rgba(0,0,0,0.30);
+    backdrop-filter: blur(2px);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    opacity: 0.8;
+  }
+  .lut-swatch-arrow {
+    opacity: 0.7;
+    font-size: 14px;
+  }
+  .lut-swatch-label {
+    background: rgba(0,0,0,0.30);
+    backdrop-filter: blur(2px);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+
+  /* ── Download Button ── */
+  .lut-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255,107,53,0.12);
+    border: 1px solid rgba(255,107,53,0.3);
+    color: #FF6B35;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .lut-download-btn:hover {
+    background: rgba(255,107,53,0.22);
+    border-color: rgba(255,107,53,0.55);
+  }
+  .iphone-btn {
+    background: rgba(96,165,250,0.12);
+    border-color: rgba(96,165,250,0.30);
+    color: #60A5FA;
+  }
+  .iphone-btn:hover {
+    background: rgba(96,165,250,0.22);
+    border-color: rgba(96,165,250,0.55);
+  }
+
+  /* ── Light mode overrides ── */
+  :global(html.light) .luts-hero { background: #f5f5f7; }
+  :global(html.light) .lut-card {
+    background: #FFFFFF;
+    border-color: #E5E7EB;
+  }
+  :global(html.light) .lut-card:hover {
+    border-color: rgba(255,107,53,0.5);
+  }
+  :global(html.light) .lut-card h3 { color: #111827; }
+  :global(html.light) .lut-card p { color: #4B5563; }
+</style>

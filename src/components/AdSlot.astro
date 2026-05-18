@@ -1,0 +1,34 @@
+---
+interface Props {
+  slot?: 'in-article' | 'between-section' | 'end-of-post';
+}
+const { slot: slotType = 'in-article' } = Astro.props;
+const isProd = import.meta.env.PROD;
+const adClient = import.meta.env.ADSENSE_CLIENT_ID;
+---
+
+{isProd && adClient ? (
+  <!-- ═══════════════════════════════════════════════════════
+       ADSENSE AD UNIT — swap in your real code here
+       Slot type: {slotType}
+       ═══════════════════════════════════════════════════════ -->
+  <div class="my-8 flex justify-center not-prose" aria-label="Advertisement">
+    <!--
+      REPLACE THIS BLOCK with your actual AdSense ad unit code.
+      Example:
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXXX"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script>
+    -->
+  </div>
+) : (
+  <div class="my-8 not-prose">
+    <div class="rounded-lg border border-dashed border-[#1F2028] bg-[#141417]/50 flex items-center justify-center py-8 text-[#6B7280] text-xs">
+      [Ad placeholder — {slotType}]
+    </div>
+  </div>
+)}

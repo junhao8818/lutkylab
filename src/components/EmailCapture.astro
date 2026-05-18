@@ -1,0 +1,197 @@
+---
+interface Props {
+  headline?: string;
+  subline?: string;
+  buttonText?: string;
+  source?: string; // where on the site this form appears
+}
+
+const {
+  headline = 'Get new LUTs before anyone else',
+  subline = 'Drop your email. We send new LUT packs, grading tips, and camera guides — no spam, unsubscribe any time.',
+  buttonText = 'Send me the LUTs',
+  source = 'site',
+} = Astro.props;
+
+// Replace with your MailerLite form action URL after creating a free account
+// https://app.mailerlite.com → Forms → Create embedded form → copy the action URL
+const FORM_ACTION = import.meta.env.MAILERLITE_FORM_ACTION || '';
+const hasForm = !!FORM_ACTION;
+---
+
+<div class="email-capture-box" id="email-capture">
+  <div class="ec-inner">
+    <div class="ec-icon" aria-hidden="true">📩</div>
+    <div class="ec-content">
+      <h3 class="ec-headline">{headline}</h3>
+      <p class="ec-sub">{subline}</p>
+
+      {hasForm ? (
+        <!-- Live MailerLite form -->
+        <form
+          class="ec-form"
+          action={FORM_ACTION}
+          method="POST"
+          data-source={source}
+          id="lk-email-form"
+        >
+          <div class="ec-row">
+            <input
+              type="email"
+              name="fields[email]"
+              placeholder="your@email.com"
+              required
+              autocomplete="email"
+              class="ec-input"
+            />
+            <button type="submit" class="ec-btn">{buttonText}</button>
+          </div>
+          <p class="ec-legal">No spam. Unsubscribe any time.</p>
+          <p class="ec-success" hidden>✓ You're in — check your inbox!</p>
+        </form>
+      ) : (
+        <!-- Placeholder — shown in dev or before MailerLite is configured -->
+        <div class="ec-placeholder">
+          <div class="ec-row">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              class="ec-input"
+              disabled
+              title="Add MAILERLITE_FORM_ACTION to .env to activate"
+            />
+            <button class="ec-btn" disabled>{buttonText}</button>
+          </div>
+          <p class="ec-legal">
+            Email capture not yet configured.
+            <a href="https://mailerlite.com" target="_blank" rel="noopener" class="ec-setup-link">
+              Set up free MailerLite account →
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+{hasForm && (
+  <script>
+    const form = document.getElementById('lk-email-form') as HTMLFormElement | null;
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const success = form.querySelector('.ec-success') as HTMLElement;
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        try {
+          const data = new FormData(form);
+          await fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' });
+          form.querySelector('.ec-row')?.setAttribute('hidden', '');
+          form.querySelector('.ec-legal')?.setAttribute('hidden', '');
+          if (success) success.removeAttribute('hidden');
+        } catch {
+          btn.disabled = false;
+          btn.textContent = 'Try again';
+        }
+      });
+    }
+  </script>
+)}
+
+<style>
+  .email-capture-box {
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 107, 53, 0.25);
+    background: linear-gradient(135deg, rgba(255,107,53,0.07) 0%, rgba(96,165,250,0.05) 100%);
+    padding: 2rem;
+    margin: 2.5rem 0;
+  }
+  .ec-inner {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  .ec-icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .ec-content { flex: 1; }
+  .ec-headline {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #F5F5F5;
+    margin: 0 0 0.4rem;
+  }
+  .ec-sub {
+    font-size: 0.875rem;
+    color: #9CA3AF;
+    margin: 0 0 1.1rem;
+    line-height: 1.55;
+  }
+  .ec-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .ec-input {
+    flex: 1;
+    min-width: 180px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.625rem;
+    padding: 0.6rem 0.9rem;
+    color: #F5F5F5;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ec-input:focus { border-color: #FF6B35; }
+  .ec-input::placeholder { color: #6B7280; }
+  .ec-input:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .ec-btn {
+    background: #FF6B35;
+    color: #fff;
+    border: none;
+    border-radius: 0.625rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+  .ec-btn:hover:not(:disabled) { opacity: 0.88; }
+  .ec-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .ec-legal {
+    font-size: 0.75rem;
+    color: #6B7280;
+    margin-top: 0.5rem;
+  }
+  .ec-setup-link { color: #60A5FA; }
+  .ec-success {
+    color: #4ADE80;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  /* Light mode */
+  :global(html.light) .email-capture-box {
+    background: linear-gradient(135deg, rgba(255,107,53,0.06) 0%, rgba(96,165,250,0.04) 100%);
+    border-color: rgba(255,107,53,0.3);
+  }
+  :global(html.light) .ec-headline { color: #111827; }
+  :global(html.light) .ec-sub      { color: #4B5563; }
+  :global(html.light) .ec-input {
+    background: #FFFFFF;
+    border-color: #D1D5DB;
+    color: #111827;
+  }
+  :global(html.light) .ec-input::placeholder { color: #9CA3AF; }
+  :global(html.light) .ec-legal { color: #6B7280; }
+</style>
